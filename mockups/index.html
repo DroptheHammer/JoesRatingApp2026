@@ -94,6 +94,10 @@
   .cat-top .score { font-family: var(--script); color: var(--red); font-size: 30px; line-height: 1; }
   .cat.tertiary { background: transparent; border-style: dashed; padding: 8px 12px 10px; }
   .cat.tertiary .dots10 button { font-size: 10px; }
+  .dots10.off { opacity: .35; }
+  .na-tag { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: .08em; color: var(--muted); }
+  .na-btn { margin-top: 8px; width: 100%; padding: 6px; border: 1.5px dashed var(--muted); background: transparent; color: var(--muted); font-family: var(--sans); font-weight: 700; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; border-radius: 14px; cursor: pointer; }
+  .na-btn.on { border-style: solid; border-color: var(--green); background: var(--green); color: #fff; }
   .cat .hint { font-size: 11px; color: var(--muted); margin: 2px 0 8px; }
   .dots10 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
   .dots10 button { aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--red); background: transparent; color: var(--red); font-family: var(--sans); font-weight: 700; font-size: 11px; cursor: pointer; padding: 0; }
@@ -319,7 +323,7 @@
     <li><b>Report Card:</b> the permanent record for that visit, with letter grades, photos and everyone's comments.</li>
     <li><b>Leaderboard:</b> ranks every Joe's, overall or by a single category.</li>
   </ol>
-  <p><b>Scoring:</b> overall = 40% Food + 20% Decor + 15% Service + 15% Bathroom + 10% Christmas Spirit (the tertiary category), using the group average for each category. Letter grades: 9+ A, 8+ B, 7+ C, 6+ D. Try tapping the numbers on screen 2. The score updates live.</p>
+  <p><b>Scoring:</b> overall = 40% Food + 20% Decor + 15% Service + 15% Bathroom + 10% Christmas Spirit (the tertiary category), using the group average for each category. Letter grades: 9+ A, 8+ B, 7+ C, 6+ D. Off-season, Christmas Spirit can be marked <b>N/A</b>: it's skipped and the other weights scale up proportionally (Food 44%, Decor 22%, Service 17%, Bathroom 17%), so summer visits aren't penalized. Try tapping the numbers or the N/A button on screen 2. The score updates live.</p>
   <p><b>Placeholders:</b> the location list, family names and all scores are sample data.</p>
 </div>
 
@@ -343,13 +347,18 @@ const NB = {
 const LOCS = [
   { name: 'North Beach',  city: 'San Francisco', date: 'Nov 22', avg: null },
   { name: 'Westlake',     city: 'Daly City',     date: 'Nov 29', avg: { decor: 8.5, service: 7.8, bath: 7.5, food: 7.2, xmas: 9.5 } },
-  { name: 'Burlingame',   city: 'Burlingame',    date: 'Nov 15', avg: { decor: 6.0, service: 7.5, bath: 8.3, food: 7.0, xmas: 5.0 } },
+  { name: 'Burlingame',   city: 'Burlingame',    date: 'Aug 15', avg: { decor: 6.0, service: 7.5, bath: 8.3, food: 7.0, xmas: null } },
   { name: 'San Jose',     city: 'San Jose',      date: null },
   { name: 'Little Original Joe’s', city: 'Chestnut St · Marina, SF', date: null },
 ];
 
 const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
-const overall = s => Object.keys(W).reduce((t, k) => t + W[k] * s[k], 0);
+// N/A (null) categories are skipped and the remaining weights scale up to 100%
+const overall = s => {
+  const ks = Object.keys(W).filter(k => s[k] != null);
+  const tw = ks.reduce((t, k) => t + W[k], 0);
+  return ks.reduce((t, k) => t + W[k] * s[k], 0) / tw;
+};
 const grade = v => v >= 9 ? 'A' : v >= 8 ? 'B' : v >= 7 ? 'C' : v >= 6 ? 'D' : 'F';
 const f1 = v => v.toFixed(1);
 
@@ -361,7 +370,7 @@ LOCS[0].avg = nbAvg;
 document.getElementById('locList').innerHTML = LOCS.map(l => {
   if (!l.avg) return `<div class="loc"><div class="badge todo">?</div><div class="meta"><b>${l.name}</b><i>${l.city}</i></div>${l.name === 'San Jose' ? '<span class="pill gold">Up next</span>' : ''}</div>`;
   const o = overall(l.avg);
-  return `<div class="loc"><div class="badge">${f1(o)}<small>${grade(o)}</small></div><div class="meta"><b>${l.name}</b><i>${l.city} · visited ${l.date}</i></div><span class="pill">✓ Rated</span></div>`;
+  return `<div class="loc"><div class="badge">${f1(o)}<small>${grade(o)}</small></div><div class="meta"><b>${l.name}</b><i>${l.city} · visited ${l.date}${l.avg.xmas == null ? ' · 🎄 N/A' : ''}</i></div><span class="pill">✓ Rated</span></div>`;
 }).join('');
 
 // Rate (interactive)
@@ -369,15 +378,17 @@ const mine = { ...NB.Dad };
 function renderCats() {
   document.getElementById('cats').innerHTML = CATS.map(c => `
     <div class="cat${c.k === 'xmas' ? ' tertiary' : ''}">
-      <div class="cat-top"><div><b>${c.name}</b> <span class="w">${Math.round(W[c.k] * 100)}%</span></div><span class="score">${mine[c.k]}</span></div>
-      <div class="hint">${c.hint}</div>
-      <div class="dots10">${[...Array(10)].map((_, i) => `<button data-k="${c.k}" data-v="${i + 1}" class="${i + 1 <= mine[c.k] ? 'on' : ''}">${i + 1}</button>`).join('')}</div>
+      <div class="cat-top"><div><b>${c.name}</b> <span class="w">${Math.round(W[c.k] * 100)}%</span></div><span class="score">${mine[c.k] ?? '<span class="na-tag">N/A</span>'}</span></div>
+      <div class="hint">${c.k === 'xmas' && mine.xmas == null ? 'Off-season · skipped, other weights scale up to 100%' : c.hint}</div>
+      <div class="dots10${mine[c.k] == null ? ' off' : ''}">${[...Array(10)].map((_, i) => `<button data-k="${c.k}" data-v="${i + 1}" class="${mine[c.k] != null && i + 1 <= mine[c.k] ? 'on' : ''}">${i + 1}</button>`).join('')}</div>
+      ${c.k === 'xmas' ? `<button class="na-btn${mine.xmas == null ? ' on' : ''}" data-na="xmas">${mine.xmas == null ? '✓ ' : ''}N/A · Off-season</button>` : ''}
     </div>`).join('');
   document.getElementById('myOverall').textContent = f1(overall(mine));
 }
 document.getElementById('cats').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  mine[b.dataset.k] = +b.dataset.v; renderCats();
+  if (b.dataset.na) mine.xmas = mine.xmas == null ? 9 : null; else mine[b.dataset.k] = +b.dataset.v;
+  renderCats();
 });
 renderCats();
 
@@ -406,7 +417,7 @@ document.getElementById('rcGrades').innerHTML = CATS.map(c => `
 const ranked = LOCS.filter(l => l.avg).map(l => ({ ...l, o: overall(l.avg) })).sort((a, b) => b.o - a.o);
 const best = l => { const k = CATS.reduce((m, c) => l.avg[c.k] > l.avg[m] ? c.k : m, 'decor'); return short[k]; };
 document.getElementById('ranks').innerHTML = ranked.map((l, i) => `
-  <div class="rank"><span class="n">${i + 1}</span><div class="meta"><b>${l.name}</b><i>${l.city} · best at ${best(l)}</i></div><span class="s">${f1(l.o)}</span></div>`).join('') +
+  <div class="rank"><span class="n">${i + 1}</span><div class="meta"><b>${l.name}</b><i>${l.city} · best at ${best(l)}${l.avg.xmas == null ? " · 🎄 N/A" : ""}</i></div><span class="s">${f1(l.o)}</span></div>`).join('') +
   `<div class="rank" style="opacity:.5"><span class="n">–</span><div class="meta"><b>San Jose</b><i>Not visited yet</i></div><span class="s">?</span></div><div class="rank" style="opacity:.5"><span class="n">–</span><div class="meta"><b>Little Original Joe’s</b><i>Chestnut St · Not visited yet</i></div><span class="s">?</span></div>`;
 </script>
 </body>
