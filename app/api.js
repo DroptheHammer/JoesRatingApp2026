@@ -7,7 +7,7 @@ import * as demo from './demo.js';
 
 // Paste the Web app URL from Apps Script → Deploy here (ends in /exec).
 // It can also be set per phone in the app's Settings screen.
-export const SCRIPT_URL = 'PASTE_WEB_APP_URL_HERE';
+export const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpK2D9sJb-DSmhwwAzMjUBz2rLkUvPN7nTIXcTPxF7xLa8LaAo5UgoS8iPNMV_hXWKnw/exec';
 
 const K = { pass: 'joes.passcode', backend: 'joes.backend', name: 'joes.name' };
 export const getPasscode = () => localStorage.getItem(K.pass) || '';
