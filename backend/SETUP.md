@@ -29,10 +29,12 @@ created in your Google Drive, with these tabs: `Ratings`, `Locations`, `Photos`,
 4. Copy the **Web app URL** (ends in `/exec`).
 
 ## 4. Connect the app
-1. Paste the URL into `SCRIPT_URL` in [`app/api.js`](../app/api.js), or send it to Claude to do it.
-   This URL isn't secret by itself: without the passcode it can't read or write anything.
-2. Open `app/connection-test.html`, enter the passcode, and try **Load data** and **Submit test rating**.
-   A new row should appear in the `Ratings` tab.
+Either:
+- **Send the URL to Claude** to build it into `app/api.js`, so every phone connects automatically. This is the easiest option.
+- Or on each phone, open the app → ⚙︎ **Settings** → paste it into **Google Sheet web app URL** → **Save & Test Connection**.
+
+This URL isn't secret by itself: without the passcode it can't read or write anything.
+Once connected, the yellow "Demo mode" banner disappears. Do a test rating and check that a row appears in the `Ratings` tab.
 
 ## Notes
 - **Changing the script later:** use **Deploy → Manage deployments → ✏️ → Version: New version**.
