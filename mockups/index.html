@@ -345,7 +345,7 @@ const LOCS = [
   { name: 'Westlake',     city: 'Daly City',     date: 'Nov 29', avg: { decor: 8.5, service: 7.8, bath: 7.5, food: 7.2, xmas: 9.5 } },
   { name: 'Burlingame',   city: 'Burlingame',    date: 'Nov 15', avg: { decor: 6.0, service: 7.5, bath: 8.3, food: 7.0, xmas: 5.0 } },
   { name: 'San Jose',     city: 'San Jose',      date: null },
-  { name: 'Location TBD', city: 'Add another Joe’s', date: null },
+  { name: 'Little Original Joe’s', city: 'Chestnut St · Marina, SF', date: null },
 ];
 
 const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
@@ -407,7 +407,7 @@ const ranked = LOCS.filter(l => l.avg).map(l => ({ ...l, o: overall(l.avg) })).s
 const best = l => { const k = CATS.reduce((m, c) => l.avg[c.k] > l.avg[m] ? c.k : m, 'decor'); return short[k]; };
 document.getElementById('ranks').innerHTML = ranked.map((l, i) => `
   <div class="rank"><span class="n">${i + 1}</span><div class="meta"><b>${l.name}</b><i>${l.city} · best at ${best(l)}</i></div><span class="s">${f1(l.o)}</span></div>`).join('') +
-  `<div class="rank" style="opacity:.5"><span class="n">–</span><div class="meta"><b>San Jose</b><i>Not visited yet</i></div><span class="s">?</span></div>`;
+  `<div class="rank" style="opacity:.5"><span class="n">–</span><div class="meta"><b>San Jose</b><i>Not visited yet</i></div><span class="s">?</span></div><div class="rank" style="opacity:.5"><span class="n">–</span><div class="meta"><b>Little Original Joe’s</b><i>Chestnut St · Not visited yet</i></div><span class="s">?</span></div>`;
 </script>
 </body>
 </html>
