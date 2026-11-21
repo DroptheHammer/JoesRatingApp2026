@@ -92,6 +92,8 @@
   .cat-top b { text-transform: uppercase; letter-spacing: .08em; font-size: 13px; }
   .cat-top .w { font-size: 10px; color: var(--muted); letter-spacing: .1em; }
   .cat-top .score { font-family: var(--script); color: var(--red); font-size: 30px; line-height: 1; }
+  .cat.tertiary { background: transparent; border-style: dashed; padding: 8px 12px 10px; }
+  .cat.tertiary .dots10 button { font-size: 10px; }
   .cat .hint { font-size: 11px; color: var(--muted); margin: 2px 0 8px; }
   .dots10 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
   .dots10 button { aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--red); background: transparent; color: var(--red); font-family: var(--sans); font-weight: 700; font-size: 11px; cursor: pointer; padding: 0; }
@@ -285,15 +287,16 @@
         <h2 class="script">The Rankings</h2>
         <div class="sub">Best Joe's So Far</div>
         <div class="chips">
-          <span class="on">Overall</span><span>🛋️ Decor</span><span>🍝 Food</span><span>🤵 Service</span><span>🚻 Bath</span>
+          <span class="on">Overall</span><span>🛋️ Decor</span><span>🍝 Food</span><span>🤵 Service</span><span>🚻 Bath</span><span>🎄 Xmas</span>
         </div>
         <div id="ranks"></div>
         <div class="boxed" style="margin-top:18px">
           <div class="sub">Weighting</div>
           <div class="row"><span class="name">Food</span><span class="dots"></span><span class="val">40%</span></div>
           <div class="row"><span class="name">Decor &amp; Coziness</span><span class="dots"></span><span class="val">20%</span></div>
-          <div class="row"><span class="name">Service</span><span class="dots"></span><span class="val">20%</span></div>
-          <div class="row"><span class="name">Bathroom</span><span class="dots"></span><span class="val">20%</span></div>
+          <div class="row"><span class="name">Service</span><span class="dots"></span><span class="val">15%</span></div>
+          <div class="row"><span class="name">Bathroom</span><span class="dots"></span><span class="val">15%</span></div>
+          <div class="row"><span class="name">🎄 Christmas Spirit</span><span class="dots"></span><span class="val">10%</span></div>
         </div>
       </div>
       <div class="tabbar">
@@ -311,41 +314,42 @@
   <h3>How it works</h3>
   <ol>
     <li><b>The Quest:</b> all the Original Joe's locations, with visited ones showing their score badge.</li>
-    <li><b>Rate at the Table:</b> each person taps 1–10 for the 4 categories, adds comments and photos. The avatars show who's finished.</li>
+    <li><b>Rate at the Table:</b> each person taps 1–10 for the 5 categories, adds comments and photos. The avatars show who's finished.</li>
     <li><b>The Wrap-Up:</b> once everyone submits, the app shows each category's average, everyone's scores side by side, and the weighted overall score.</li>
     <li><b>Report Card:</b> the permanent record for that visit, with letter grades, photos and everyone's comments.</li>
     <li><b>Leaderboard:</b> ranks every Joe's, overall or by a single category.</li>
   </ol>
-  <p><b>Scoring:</b> overall = 40% Food + 20% Decor + 20% Service + 20% Bathroom, using the group average for each category. Letter grades: 9+ A, 8+ B, 7+ C, 6+ D. Try tapping the numbers on screen 2. The score updates live.</p>
+  <p><b>Scoring:</b> overall = 40% Food + 20% Decor + 15% Service + 15% Bathroom + 10% Christmas Spirit (the tertiary category), using the group average for each category. Letter grades: 9+ A, 8+ B, 7+ C, 6+ D. Try tapping the numbers on screen 2. The score updates live.</p>
   <p><b>Placeholders:</b> the location list, family names and all scores are sample data.</p>
 </div>
 
 <script>
-const W = { food: .4, decor: .2, service: .2, bath: .2 };
+const W = { food: .4, decor: .2, service: .15, bath: .15, xmas: .1 };
 const CATS = [
   { k: 'decor',   name: '🛋️ Decor & Coziness', hint: 'Ambiance, comfort, lighting, vibe' },
   { k: 'service', name: '🤵 Service',         hint: 'Friendly, attentive, timing' },
   { k: 'bath',    name: '🚻 Bathroom',        hint: 'Clean, spacious, air flow, good smell' },
   { k: 'food',    name: '🍝 Food Quality',    hint: 'Good ingredients, high quality prep' },
+  { k: 'xmas',    name: '🎄 Christmas Spirit', hint: 'Tertiary · lights, the tree, holiday cheer' },
 ];
 const PEOPLE = ['Dad', 'Mom', 'Sis', 'Bro'];
 // sample ratings for North Beach: person -> category -> score
 const NB = {
-  Dad: { decor: 9,  service: 8, bath: 6, food: 9 },
-  Mom: { decor: 8,  service: 9, bath: 5, food: 9 },
-  Sis: { decor: 9,  service: 7, bath: 4, food: 8 },
-  Bro: { decor: 10, service: 8, bath: 7, food: 10 },
+  Dad: { decor: 9,  service: 8, bath: 6, food: 9,  xmas: 9 },
+  Mom: { decor: 8,  service: 9, bath: 5, food: 9,  xmas: 10 },
+  Sis: { decor: 9,  service: 7, bath: 4, food: 8,  xmas: 8 },
+  Bro: { decor: 10, service: 8, bath: 7, food: 10, xmas: 9 },
 };
 const LOCS = [
   { name: 'North Beach',  city: 'San Francisco', date: 'Nov 22', avg: null },
-  { name: 'Westlake',     city: 'Daly City',     date: 'Nov 29', avg: { decor: 8.5, service: 7.8, bath: 7.5, food: 7.2 } },
-  { name: 'Burlingame',   city: 'Burlingame',    date: 'Nov 15', avg: { decor: 6.0, service: 7.5, bath: 8.3, food: 7.0 } },
+  { name: 'Westlake',     city: 'Daly City',     date: 'Nov 29', avg: { decor: 8.5, service: 7.8, bath: 7.5, food: 7.2, xmas: 9.5 } },
+  { name: 'Burlingame',   city: 'Burlingame',    date: 'Nov 15', avg: { decor: 6.0, service: 7.5, bath: 8.3, food: 7.0, xmas: 5.0 } },
   { name: 'San Jose',     city: 'San Jose',      date: null },
   { name: 'Location TBD', city: 'Add another Joe’s', date: null },
 ];
 
 const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
-const overall = s => W.food * s.food + W.decor * s.decor + W.service * s.service + W.bath * s.bath;
+const overall = s => Object.keys(W).reduce((t, k) => t + W[k] * s[k], 0);
 const grade = v => v >= 9 ? 'A' : v >= 8 ? 'B' : v >= 7 ? 'C' : v >= 6 ? 'D' : 'F';
 const f1 = v => v.toFixed(1);
 
@@ -364,8 +368,8 @@ document.getElementById('locList').innerHTML = LOCS.map(l => {
 const mine = { ...NB.Dad };
 function renderCats() {
   document.getElementById('cats').innerHTML = CATS.map(c => `
-    <div class="cat">
-      <div class="cat-top"><div><b>${c.name}</b> <span class="w">${W[c.k] * 100}%</span></div><span class="score">${mine[c.k]}</span></div>
+    <div class="cat${c.k === 'xmas' ? ' tertiary' : ''}">
+      <div class="cat-top"><div><b>${c.name}</b> <span class="w">${Math.round(W[c.k] * 100)}%</span></div><span class="score">${mine[c.k]}</span></div>
       <div class="hint">${c.hint}</div>
       <div class="dots10">${[...Array(10)].map((_, i) => `<button data-k="${c.k}" data-v="${i + 1}" class="${i + 1 <= mine[c.k] ? 'on' : ''}">${i + 1}</button>`).join('')}</div>
     </div>`).join('');
@@ -380,8 +384,8 @@ renderCats();
 // Wrap-up
 const nbO = overall(nbAvg);
 document.getElementById('wrapOverall').textContent = f1(nbO);
-document.getElementById('wrapMath').innerHTML = CATS.map(c => `${W[c.k] * 100}%×${f1(nbAvg[c.k])}`).join(' + ');
-const short = { decor: '🛋️ Decor', service: '🤵 Service', bath: '🚻 Bath', food: '🍝 Food' };
+document.getElementById('wrapMath').innerHTML = CATS.map(c => `${Math.round(W[c.k] * 100)}%×${f1(nbAvg[c.k])}`).join(' + ');
+const short = { decor: '🛋️ Decor', service: '🤵 Service', bath: '🚻 Bath', food: '🍝 Food', xmas: '🎄 Xmas' };
 document.getElementById('wrapTable').innerHTML =
   `<tr><th></th>${PEOPLE.map(p => `<th>${p}</th>`).join('')}<th>Avg</th></tr>` +
   CATS.map(c => {
