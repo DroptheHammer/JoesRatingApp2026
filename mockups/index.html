@@ -163,7 +163,7 @@
       <div class="status"><span>7:42</span><span>●●● ▮</span></div>
       <div class="scroll">
         <h2 class="script">All the Joes</h2>
-        <div class="sub">Christmas Tour · 2026</div>
+        <div class="sub">The Bay Area Original Joe’s Tour</div>
         <hr class="rule">
         <div class="row"><span class="name">Joes Visited</span><span class="dots"></span><span class="val">3 of 5</span></div>
         <div class="progress"><div style="width:60%"></div></div>
@@ -199,11 +199,11 @@
         <div id="cats"></div>
 
         <div class="section-head">Comments</div>
-        <textarea class="note">The tree by the bar is huge. Veal parm was perfect. Bathroom line was 3 deep…</textarea>
+        <textarea class="note">Love the red booths. Veal parm was perfect. Bathroom line was 3 deep…</textarea>
         <div class="section-head">Photos</div>
         <div class="photo-add">
           <div style="background-image:url(assets/menu.jpg)"></div>
-          <div>🎄</div>
+          <div>🍷</div>
           <div>＋</div>
         </div>
         <div class="row"><span class="name">Your Score</span><span class="dots"></span><span class="val" id="myOverall" style="color:var(--red);font-size:20px">—</span></div>
@@ -257,10 +257,10 @@
           <div id="rcGrades" style="margin-top:6px"></div>
           <div class="photos">
             <div style="background-image:url(assets/menu.jpg)"></div>
-            <div style="background:linear-gradient(160deg,#2f5d3a,#183a22)">🎄</div>
+            <div style="background:linear-gradient(160deg,#7d141b,#4a0c10)">🍷</div>
             <div style="background:linear-gradient(160deg,#c99a2e,#8b5e14)">🍝</div>
           </div>
-          <div class="quote">"Tree by the bar is the best one yet. Veal parm was perfect."<em>— Dad</em></div>
+          <div class="quote">"Those red leather booths are the coziest yet. Veal parm was perfect."<em>— Dad</em></div>
           <div class="quote">"Server remembered us from last year!!"<em>— Mom</em></div>
           <div class="quote">"Bathroom was tiny and smelled like pine cleaner. Points off."<em>— Sis</em></div>
           <div class="quote">"Meatballs 11/10"<em>— Bro</em></div>
@@ -285,13 +285,13 @@
         <h2 class="script">The Rankings</h2>
         <div class="sub">Best Joe's So Far</div>
         <div class="chips">
-          <span class="on">Overall</span><span>🎄 Decor</span><span>🍝 Food</span><span>🤵 Service</span><span>🚻 Bath</span>
+          <span class="on">Overall</span><span>🛋️ Decor</span><span>🍝 Food</span><span>🤵 Service</span><span>🚻 Bath</span>
         </div>
         <div id="ranks"></div>
         <div class="boxed" style="margin-top:18px">
           <div class="sub">Weighting</div>
           <div class="row"><span class="name">Food</span><span class="dots"></span><span class="val">40%</span></div>
-          <div class="row"><span class="name">Christmas Decor</span><span class="dots"></span><span class="val">20%</span></div>
+          <div class="row"><span class="name">Decor &amp; Coziness</span><span class="dots"></span><span class="val">20%</span></div>
           <div class="row"><span class="name">Service</span><span class="dots"></span><span class="val">20%</span></div>
           <div class="row"><span class="name">Bathroom</span><span class="dots"></span><span class="val">20%</span></div>
         </div>
@@ -323,7 +323,7 @@
 <script>
 const W = { food: .4, decor: .2, service: .2, bath: .2 };
 const CATS = [
-  { k: 'decor',   name: '🎄 Christmas Decor', hint: 'Coziness, lights, the tree, holiday spirit' },
+  { k: 'decor',   name: '🛋️ Decor & Coziness', hint: 'Ambiance, comfort, lighting, vibe' },
   { k: 'service', name: '🤵 Service',         hint: 'Friendly, attentive, timing' },
   { k: 'bath',    name: '🚻 Bathroom',        hint: 'Clean, spacious, air flow, good smell' },
   { k: 'food',    name: '🍝 Food Quality',    hint: 'Good ingredients, high quality prep' },
@@ -381,7 +381,7 @@ renderCats();
 const nbO = overall(nbAvg);
 document.getElementById('wrapOverall').textContent = f1(nbO);
 document.getElementById('wrapMath').innerHTML = CATS.map(c => `${W[c.k] * 100}%×${f1(nbAvg[c.k])}`).join(' + ');
-const short = { decor: '🎄 Decor', service: '🤵 Service', bath: '🚻 Bath', food: '🍝 Food' };
+const short = { decor: '🛋️ Decor', service: '🤵 Service', bath: '🚻 Bath', food: '🍝 Food' };
 document.getElementById('wrapTable').innerHTML =
   `<tr><th></th>${PEOPLE.map(p => `<th>${p}</th>`).join('')}<th>Avg</th></tr>` +
   CATS.map(c => {
