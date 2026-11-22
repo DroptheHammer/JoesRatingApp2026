@@ -138,7 +138,12 @@ const tabbar = active => `
 function banners() {
   let h = '';
   if (api.isDemo()) h += `<div class="banner">Demo mode · sample data on this phone only · <a href="#/settings" style="color:#fff">connect sheet</a></div>`;
-  if (S.error) h += `<div class="banner err">${esc(S.error)} <button data-act="refresh">Retry</button></div>`;
+  if (S.error && /wrong passcode/i.test(S.error)) {
+    // Retrying with the same stored passcode can't succeed, so send them to re-enter it.
+    h += `<div class="banner err">${esc(S.error)} <button data-go="#/settings">Re-enter passcode</button></div>`;
+  } else if (S.error) {
+    h += `<div class="banner err">${esc(S.error)} <button data-act="refresh">Retry</button></div>`;
+  }
   return h;
 }
 
